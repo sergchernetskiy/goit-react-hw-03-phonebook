@@ -1,11 +1,12 @@
 import { Component } from 'react';
 import { nanoid } from 'nanoid';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+
 import { Box } from '../components/Box';
 import Form from './Form/Form';
 import { Filter } from './Filter/Filter';
 import { ContactList } from './ContactsList/ContactsList';
 import { Title, TitleContacts } from './Title/StyledTitle';
+import { NotifyFail } from '../services/notify';
 
 const LS_KEY = 'contacts';
 
@@ -35,35 +36,28 @@ export class App extends Component {
 
   addContacts = (name, number, e) => {
     const { contacts } = this.state;
-    const notifyParams = {
-      position: 'center-top',
-      useIcon: false,
-      fontSize: '18px',
-      cssAnimationStyle: 'from-bottom',
-      closeButton: false,
-      background: '#e100ff',
-    };
+
     const isNameAdded = contacts.find(
       contact => contact.name.toLowerCase() === name.toLowerCase()
     );
     const isNumberAdded = contacts.find(contact => contact.number === number);
 
     if (isNameAdded) {
-      Notify.failure(`${name} is already in contacts`, notifyParams);
+      NotifyFail(`${name} is already in contacts`);
 
-      e.preventDefault();
-      return;
+      return false;
     }
     if (isNumberAdded) {
-      Notify.failure(`${number} is already in contacts`, notifyParams);
+      NotifyFail(`${number} is already in contacts`);
 
-      e.preventDefault();
-      return;
+      return false;
     }
 
     this.setState(({ contacts }) => ({
       contacts: [...contacts, { id: nanoid(), name, number }],
     }));
+
+    return true;
   };
 
   deleteContacts = id => {

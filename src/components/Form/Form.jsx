@@ -18,7 +18,10 @@ class Form extends Component {
     const { name, number } = this.state;
 
     e.preventDefault();
-    this.props.onSubmit(name, number);
+    const isSuccess = this.props.onSubmit(name, number);
+    if (!isSuccess) {
+      return;
+    }
     this.reset();
   };
 
